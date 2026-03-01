@@ -2,6 +2,9 @@
 import { onMounted, computed } from "vue";
 import { useProductStore } from "../../stores/product.store";
 import { useCategoryStore } from "../../stores/category.store";
+import CategoryChart from "../../components/admin/charts/CategoryChart.vue";
+import PriceChart from "../../components/admin/charts/PriceChart.vue";
+import InventoryChart from "../../components/admin/charts/InventoryChart.vue";
 
 const productStore = useProductStore();
 const categoryStore = useCategoryStore();
@@ -20,96 +23,143 @@ const avgPrice = computed(() => {
   );
   return (total / productStore.products.length).toFixed(2);
 });
+
+const refreshData = async () => {
+  await Promise.all([productStore.fetchAll(), categoryStore.fetchAll()]);
+};
 </script>
 
 <template>
-  <div>
-    <h2 class="text-h4 font-weight-bold mb-6">Dashboard Administrativo</h2>
+  <!-- pa-16 en el contenedor principal y ga-16 en las filas -->
+  <v-container fluid class="pa-16 d-flex flex-column ga-16">
+    <v-row class="align-center">
+      <v-col>
+        <h2 class="text-h4 font-weight-bold">Dashboard Administrativo</h2>
+        <div class="text-subtitle-1 text-grey">
+          Resumen visual del inventario y métricas clave
+        </div>
+      </v-col>
+      <v-col cols="auto">
+        <v-btn
+          color="primary"
+          prepend-icon="mdi-refresh"
+          variant="elevated"
+          rounded="pill"
+          @click="refreshData"
+        >
+          Actualizar Datos
+        </v-btn>
+      </v-col>
+    </v-row>
 
-    <v-row>
-      <v-col cols="12" sm="4">
-        <v-card theme="dark" color="primary" class="rounded-xl pa-4">
-          <div class="text-overline mb-1">Total Productos</div>
+    <!-- ga-10 para separar los indicadores -->
+    <v-row class="ga-10">
+      <v-col cols="12" sm="3" class="pa-0">
+        <v-card
+          theme="dark"
+          border
+          color="indigo-darken-2"
+          class="rounded-xl pa-8 ma-2 elevation-4"
+        >
+          <div class="text-overline mb-2 opacity-70">Total Productos</div>
           <div class="text-h3 font-weight-bold">{{ totalProducts }}</div>
-          <v-icon
-            size="64"
-            class="position-absolute"
-            style="right: 16px; bottom: 16px; opacity: 0.2"
-            >mdi-shoe-sneaker</v-icon
-          >
         </v-card>
       </v-col>
 
-      <v-col cols="12" sm="4">
-        <v-card theme="dark" color="secondary" class="rounded-xl pa-4">
-          <div class="text-overline mb-1">Categorías Acivas</div>
+      <v-col cols="12" sm="3" class="pa-0">
+        <v-card
+          theme="dark"
+          border
+          color="teal-darken-2"
+          class="rounded-xl pa-8 ma-2 elevation-4"
+        >
+          <div class="text-overline mb-2 opacity-70">Categorías Activas</div>
           <div class="text-h3 font-weight-bold">{{ totalCategories }}</div>
-          <v-icon
-            size="64"
-            class="position-absolute"
-            style="right: 16px; bottom: 16px; opacity: 0.2"
-            >mdi-shape</v-icon
-          >
         </v-card>
       </v-col>
 
-      <v-col cols="12" sm="4">
-        <v-card theme="dark" color="success" class="rounded-xl pa-4">
-          <div class="text-overline mb-1">Precio Medio</div>
+      <v-col cols="12" sm="3" class="pa-0">
+        <v-card
+          theme="dark"
+          border
+          color="orange-darken-2"
+          class="rounded-xl pa-8 ma-2 elevation-4"
+        >
+          <div class="text-overline mb-2 opacity-70">Precio Medio</div>
           <div class="text-h3 font-weight-bold">{{ avgPrice }}€</div>
-          <v-icon
-            size="64"
-            class="position-absolute"
-            style="right: 16px; bottom: 16px; opacity: 0.2"
-            >mdi-cash-multiple</v-icon
-          >
         </v-card>
       </v-col>
     </v-row>
 
-    <v-row class="mt-6">
-      <v-col cols="12" md="8">
-        <v-card class="rounded-xl pa-6 fill-height" min-height="400">
-          <v-card-title>Análisis de Inventario</v-card-title>
-          <div
-            class="d-flex align-center justify-center fill-height bg-grey-lighten-4 rounded-lg mt-4"
+    <!-- ga-16 para separar los bloques de gráficas -->
+    <v-row class="ga-16">
+      <v-col cols="12" md="4" class="pa-0">
+        <v-card class="rounded-xl pa-10 elevation-2" border height="550">
+          <v-card-title class="px-0 pb-8 font-weight-bold text-h5"
+            >Distribución por Categoría</v-card-title
           >
-            <span class="text-grey"
-              >Gráfico de distribución por categoría (Próximamente)</span
-            >
-          </div>
+          <v-divider class="mb-10"></v-divider>
+          <CategoryChart />
         </v-card>
       </v-col>
-      <v-col cols="12" md="4">
-        <v-card class="rounded-xl pa-6 fill-height" min-height="400">
-          <v-card-title>Acciones Rápidas</v-card-title>
-          <v-list class="mt-4">
+
+      <v-col cols="12" md="7" class="pa-0">
+        <v-card class="rounded-xl pa-10 elevation-2" border height="550">
+          <v-card-title class="px-0 pb-8 font-weight-bold text-h5"
+            >Precio Medio por Categoría</v-card-title
+          >
+          <v-divider class="mb-10"></v-divider>
+          <PriceChart />
+        </v-card>
+      </v-col>
+    </v-row>
+
+    <v-row class="ga-16">
+      <v-col cols="12" md="7" class="pa-0">
+        <v-card class="rounded-xl pa-10 elevation-2" border height="550">
+          <v-card-title class="px-0 pb-8 font-weight-bold text-h5"
+            >Análisis de Stock por Marca</v-card-title
+          >
+          <v-divider class="mb-10"></v-divider>
+          <InventoryChart />
+        </v-card>
+      </v-col>
+
+      <v-col cols="12" md="4" class="pa-0">
+        <v-card class="rounded-xl pa-10 elevation-2" border height="550">
+          <v-card-title class="px-0 pb-8 font-weight-bold text-h5"
+            >Acciones Rápidas</v-card-title
+          >
+          <v-divider class="mb-10"></v-divider>
+          <v-list class="mt-4" lines="three" bg-color="transparent">
             <v-list-item
-              prepend-icon="mdi-plus"
               title="Añadir Producto"
+              subtitle="Crear nueva referencia en el inventario"
               to="/admin/products"
               link
+              color="primary"
+              variant="tonal"
+              class="rounded-lg mb-8"
             ></v-list-item>
             <v-list-item
-              prepend-icon="mdi-plus-box"
               title="Añadir Categoría"
+              subtitle="Nueva familia para organizar productos"
               to="/admin/categories"
               link
-            ></v-list-item>
-            <v-list-item
-              prepend-icon="mdi-account-group"
-              title="Gestionar Usuarios"
-              disabled
+              color="secondary"
+              variant="tonal"
+              class="rounded-lg"
             ></v-list-item>
           </v-list>
         </v-card>
       </v-col>
     </v-row>
-  </div>
+  </v-container>
 </template>
 
 <style scoped>
-.position-absolute {
-  position: absolute;
+.v-container {
+  max-width: 1800px;
+  margin: 0 auto;
 }
 </style>

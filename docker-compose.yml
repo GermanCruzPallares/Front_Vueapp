@@ -12,7 +12,6 @@ services:
 
   backend:
     image: germancruzpallares/back-vueapp:latest
-    # Mantenemos el bloque build vacío para que el comando 'docker-compose build' no falle
     build:
       context: .
       dockerfile: Dockerfile

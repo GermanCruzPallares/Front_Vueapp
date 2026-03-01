@@ -13,6 +13,9 @@ const layouts: Record<string, any> = {
   BlankLayout: defineAsyncComponent(
     () => import("@/components/layouts/BlankLayout.vue"),
   ),
+  AdminLayout: defineAsyncComponent(
+    () => import("@/components/layouts/AdminLayout.vue"),
+  ),
 };
 
 const layout = computed(

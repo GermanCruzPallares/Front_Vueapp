@@ -34,10 +34,11 @@ const toggleLocale = () => {
         to="/categories"
       ></v-list-item>
       <v-list-item
-        v-if="authStore.isAuthenticated"
-        prepend-icon="mdi-shoe-sneaker"
-        :title="t('message.products')"
-        to="/products"
+        v-if="authStore.isAdmin"
+        prepend-icon="mdi-shield-account"
+        title="Admin Panel"
+        to="/admin/dashboard"
+        color="secondary"
       ></v-list-item>
     </v-list>
   </v-navigation-drawer>

@@ -7,8 +7,12 @@ const route = useRoute();
 const authStore = useAuthStore();
 
 const layouts: Record<string, any> = {
-  MainLayout: defineAsyncComponent(() => import("./layouts/MainLayout.vue")),
-  BlankLayout: defineAsyncComponent(() => import("./layouts/BlankLayout.vue")),
+  MainLayout: defineAsyncComponent(
+    () => import("@/components/layouts/MainLayout.vue"),
+  ),
+  BlankLayout: defineAsyncComponent(
+    () => import("@/components/layouts/BlankLayout.vue"),
+  ),
 };
 
 const layout = computed(

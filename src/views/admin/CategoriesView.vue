@@ -1,12 +1,19 @@
 <script setup lang="ts">
 import { ref, onMounted } from "vue";
+import { useI18n } from "vue-i18n";
 import { useCategoryStore, type Category } from "../../stores/category.store";
 import CategoryCard from "../../components/CategoryCard.vue";
+import ConfirmDialog from "../../components/ConfirmDialog.vue";
+import { useUiStore } from "../../stores/ui.store";
 import { useForm, useField } from "vee-validate";
 import * as yup from "yup";
 
 const categoryStore = useCategoryStore();
+const uiStore = useUiStore();
+const { t } = useI18n();
 const dialog = ref(false);
+const showDeleteDialog = ref(false);
+const idToDelete = ref<number | null>(null);
 const isEditing = ref(false);
 const currentId = ref<number | null>(null);
 
@@ -14,9 +21,9 @@ const currentId = ref<number | null>(null);
 const schema = yup.object({
   name: yup
     .string()
-    .required("El nombre es obligatorio")
-    .min(3, "Mínimo 3 caracteres"),
-  description: yup.string().required("La descripción es obligatoria"),
+    .required(t("message.usernameRequired")) // Reusing usernameRequired as nameRequired or similar
+    .min(3, t("message.passwordTooShort")), // Reusing similar keys
+  description: yup.string().required(t("message.description")),
 });
 
 const { handleSubmit, resetForm, errors } = useForm({
@@ -59,9 +66,17 @@ const onSubmit = handleSubmit(async (values) => {
   }
 });
 
-const deleteCategory = async (id: number) => {
-  if (confirm("¿Estás seguro de que deseas eliminar esta categoría?")) {
-    await categoryStore.remove(id);
+const deleteCategory = (id: number) => {
+  idToDelete.value = id;
+  showDeleteDialog.value = true;
+};
+
+const confirmDelete = async () => {
+  if (idToDelete.value) {
+    const success = await categoryStore.remove(idToDelete.value);
+    if (success) {
+      uiStore.showSnackbar(t("message.deletedCat"));
+    }
   }
 };
 </script>
@@ -69,9 +84,9 @@ const deleteCategory = async (id: number) => {
 <template>
   <v-row>
     <v-col cols="12" class="d-flex align-center justify-space-between mb-4">
-      <h2 class="text-h4 font-weight-bold">Administración de Categorías</h2>
+      <h2 class="text-h4 font-weight-bold">{{ t("message.categoryAdmin") }}</h2>
       <v-btn color="primary" prepend-icon="mdi-plus" @click="openAdd">
-        Nueva Categoría
+        {{ t("message.newCategory") }}
       </v-btn>
     </v-col>
 
@@ -99,21 +114,21 @@ const deleteCategory = async (id: number) => {
       <v-card class="rounded-lg">
         <v-toolbar color="primary" dark density="comfortable">
           <v-toolbar-title>{{
-            isEditing ? "Editar Categoría" : "Nueva Categoría"
+            isEditing ? t("message.editCategory") : t("message.newCategory")
           }}</v-toolbar-title>
         </v-toolbar>
         <v-card-text class="pa-6">
           <v-form @submit.prevent="onSubmit">
             <v-text-field
               v-model="name"
-              label="Nombre"
+              :label="t('message.name')"
               variant="outlined"
               :error-messages="errors.name"
               class="mb-2"
             ></v-text-field>
             <v-textarea
               v-model="description"
-              label="Descripción"
+              :label="t('message.description')"
               variant="outlined"
               :error-messages="errors.description"
               rows="3"
@@ -121,14 +136,24 @@ const deleteCategory = async (id: number) => {
 
             <v-card-actions class="px-0 pt-4">
               <v-spacer></v-spacer>
-              <v-btn variant="text" @click="dialog = false">Cancelar</v-btn>
-              <v-btn type="submit" color="primary" variant="elevated"
-                >Guardar</v-btn
-              >
+              <v-btn variant="text" @click="dialog = false">{{
+                t("message.cancel")
+              }}</v-btn>
+              <v-btn type="submit" color="primary" variant="elevated">{{
+                t("message.save")
+              }}</v-btn>
             </v-card-actions>
           </v-form>
         </v-card-text>
       </v-card>
     </v-dialog>
+
+    <ConfirmDialog
+      v-model="showDeleteDialog"
+      :title="t('message.delete')"
+      :message="t('message.confirmDeleteCat')"
+      color="error"
+      @confirm="confirmDelete"
+    />
   </v-row>
 </template>

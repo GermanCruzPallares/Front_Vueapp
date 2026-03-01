@@ -3,19 +3,18 @@ import { ref } from "vue";
 import { useRouter } from "vue-router";
 import { useAuthStore } from "@/stores/auth.store";
 import { useI18n } from "vue-i18n";
+import LanguageSwitcher from "@/components/LanguageSwitcher.vue";
+import { useUiStore } from "@/stores/ui.store";
 
 const { t, locale } = useI18n();
 const router = useRouter();
 const authStore = useAuthStore();
+const uiStore = useUiStore();
 const drawer = ref(false);
 
 const logout = () => {
   authStore.logout();
   router.push("/login");
-};
-
-const toggleLocale = () => {
-  locale.value = locale.value === "es" ? "en" : "es";
 };
 </script>
 
@@ -34,9 +33,15 @@ const toggleLocale = () => {
         to="/categories"
       ></v-list-item>
       <v-list-item
+        v-if="authStore.isAuthenticated"
+        prepend-icon="mdi-shoe-sneaker"
+        :title="t('message.products')"
+        to="/products"
+      ></v-list-item>
+      <v-list-item
         v-if="authStore.isAdmin"
         prepend-icon="mdi-shield-account"
-        title="Admin Panel"
+        :title="t('message.adminPanel')"
         to="/admin/dashboard"
         color="secondary"
       ></v-list-item>
@@ -45,13 +50,11 @@ const toggleLocale = () => {
 
   <v-app-bar color="primary" density="compact">
     <v-app-bar-nav-icon @click="drawer = !drawer"></v-app-bar-nav-icon>
-    <v-app-bar-title>Vue Shoes Shop</v-app-bar-title>
+    <v-app-bar-title>{{ t("message.siteName") }}</v-app-bar-title>
 
     <v-spacer></v-spacer>
 
-    <v-btn icon @click="toggleLocale">
-      <v-icon>mdi-translate</v-icon>
-    </v-btn>
+    <LanguageSwitcher />
 
     <v-btn v-if="authStore.isAuthenticated" icon @click="logout">
       <v-icon>mdi-logout</v-icon>
@@ -72,4 +75,19 @@ const toggleLocale = () => {
       &copy; {{ new Date().getFullYear() }} - Vue 3 Backend Project
     </span>
   </v-footer>
+
+  <!-- Global Snackbar -->
+  <v-snackbar
+    v-model="uiStore.snackbar.show"
+    :color="uiStore.snackbar.color"
+    location="top"
+    timeout="3000"
+  >
+    {{ uiStore.snackbar.text }}
+    <template v-slot:actions>
+      <v-btn variant="text" @click="uiStore.snackbar.show = false">
+        Cerrar
+      </v-btn>
+    </template>
+  </v-snackbar>
 </template>

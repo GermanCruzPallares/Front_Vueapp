@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { useAuthStore } from "../stores/auth.store";
+import { useI18n } from "vue-i18n";
 import type { Category } from "../stores/category.store";
 
 defineProps<{
@@ -12,6 +13,7 @@ const emit = defineEmits<{
 }>();
 
 const authStore = useAuthStore();
+const { t } = useI18n();
 </script>
 
 <template>
@@ -37,7 +39,7 @@ const authStore = useAuthStore();
         prepend-icon="mdi-pencil"
         @click="emit('edit', category)"
       >
-        Editar
+        {{ t("message.edit") }}
       </v-btn>
       <v-btn
         variant="text"
@@ -45,7 +47,7 @@ const authStore = useAuthStore();
         prepend-icon="mdi-delete"
         @click="emit('delete', category.id)"
       >
-        Eliminar
+        {{ t("message.delete") }}
       </v-btn>
     </v-card-actions>
   </v-card>

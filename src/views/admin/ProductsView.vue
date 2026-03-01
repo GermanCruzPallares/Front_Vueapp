@@ -1,26 +1,30 @@
 <script setup lang="ts">
 import { ref, onMounted } from "vue";
+import { useI18n } from "vue-i18n";
 import { useProductStore, type Product } from "../../stores/product.store";
 import { useCategoryStore } from "../../stores/category.store";
 import ProductCard from "../../components/ProductCard.vue";
+import ConfirmDialog from "../../components/ConfirmDialog.vue";
+import { useUiStore } from "../../stores/ui.store";
 import { useForm, useField } from "vee-validate";
 import * as yup from "yup";
 
 const productStore = useProductStore();
 const categoryStore = useCategoryStore();
+const uiStore = useUiStore();
+const { t } = useI18n();
 const dialog = ref(false);
+const showDeleteDialog = ref(false);
+const idToDelete = ref<number | null>(null);
 const isEditing = ref(false);
 const currentId = ref<number | null>(null);
 
 // Validation Schema
 const schema = yup.object({
-  name: yup.string().required("El nombre es obligatorio"),
-  price: yup
-    .number()
-    .required("El precio es obligatorio")
-    .positive("Debe ser mayor a 0"),
-  categoryId: yup.number().required("La categoría es obligatoria"),
-  description: yup.string().required("La descripción es obligatoria"),
+  name: yup.string().required(t("message.usernameRequired")),
+  price: yup.number().required(t("message.price")).positive(" > 0"),
+  categoryId: yup.number().required(t("message.category")),
+  description: yup.string().required(t("message.description")),
   brand: yup.string().nullable(),
   size: yup.string().nullable(),
   color: yup.string().nullable(),
@@ -77,9 +81,17 @@ const onSubmit = handleSubmit(async (values) => {
   }
 });
 
-const deleteProduct = async (id: number) => {
-  if (confirm("¿Estás seguro de que deseas eliminar este producto?")) {
-    await productStore.remove(id);
+const deleteProduct = (id: number) => {
+  idToDelete.value = id;
+  showDeleteDialog.value = true;
+};
+
+const confirmDelete = async () => {
+  if (idToDelete.value) {
+    const success = await productStore.remove(idToDelete.value);
+    if (success) {
+      uiStore.showSnackbar(t("message.deletedProd"));
+    }
   }
 };
 </script>
@@ -88,7 +100,7 @@ const deleteProduct = async (id: number) => {
   <v-row>
     <v-col cols="12" class="d-flex align-center justify-space-between mb-4">
       <h2 class="text-h4 font-weight-bold">
-        Gestión de Inventario (Productos)
+        {{ t("message.productAdmin") }}
       </h2>
       <v-btn
         color="primary"
@@ -97,7 +109,7 @@ const deleteProduct = async (id: number) => {
         prepend-icon="mdi-plus"
         @click="openAdd"
       >
-        Nuevo Producto
+        {{ t("message.newProduct") }}
       </v-btn>
     </v-col>
 
@@ -129,7 +141,7 @@ const deleteProduct = async (id: number) => {
             <v-icon>mdi-close</v-icon>
           </v-btn>
           <v-toolbar-title>{{
-            isEditing ? "Actualizar Producto" : "Añadir Producto"
+            isEditing ? t("message.updateProduct") : t("message.addProduct")
           }}</v-toolbar-title>
         </v-toolbar>
         <v-card-text class="pa-6">
@@ -138,7 +150,7 @@ const deleteProduct = async (id: number) => {
               <v-col cols="12" sm="8">
                 <v-text-field
                   v-model="name"
-                  label="Nombre del calzado"
+                  :label="t('message.name')"
                   variant="outlined"
                   :error-messages="errors.name"
                 ></v-text-field>
@@ -146,7 +158,7 @@ const deleteProduct = async (id: number) => {
               <v-col cols="12" sm="4">
                 <v-text-field
                   v-model.number="price"
-                  label="Precio (€)"
+                  :label="t('message.price') + ' (€)'"
                   type="number"
                   variant="outlined"
                   :error-messages="errors.price"
@@ -158,7 +170,7 @@ const deleteProduct = async (id: number) => {
                   :items="categoryStore.categories"
                   item-title="name"
                   item-value="id"
-                  label="Categoría"
+                  :label="t('message.category')"
                   variant="outlined"
                   :error-messages="errors.categoryId"
                 ></v-select>
@@ -166,28 +178,28 @@ const deleteProduct = async (id: number) => {
               <v-col cols="12" sm="6">
                 <v-text-field
                   v-model="brand"
-                  label="Marca"
+                  :label="t('message.brand')"
                   variant="outlined"
                 ></v-text-field>
               </v-col>
               <v-col cols="12" sm="6">
                 <v-text-field
                   v-model="size"
-                  label="Talla"
+                  :label="t('message.size')"
                   variant="outlined"
                 ></v-text-field>
               </v-col>
               <v-col cols="12" sm="6">
                 <v-text-field
                   v-model="color"
-                  label="Color"
+                  :label="t('message.color')"
                   variant="outlined"
                 ></v-text-field>
               </v-col>
               <v-col cols="12">
                 <v-textarea
                   v-model="description"
-                  label="Descripción del producto"
+                  :label="t('message.description')"
                   variant="outlined"
                   :error-messages="errors.description"
                   rows="3"
@@ -201,7 +213,7 @@ const deleteProduct = async (id: number) => {
                 variant="text"
                 color="grey-darken-1"
                 @click="dialog = false"
-                >Cancelar</v-btn
+                >{{ t("message.cancel") }}</v-btn
               >
               <v-btn
                 type="submit"
@@ -210,12 +222,20 @@ const deleteProduct = async (id: number) => {
                 size="large"
                 class="px-6"
               >
-                {{ isEditing ? "Actualizar" : "Guardar" }}
+                {{ isEditing ? t("message.update") : t("message.save") }}
               </v-btn>
             </v-card-actions>
           </v-form>
         </v-card-text>
       </v-card>
     </v-dialog>
+
+    <ConfirmDialog
+      v-model="showDeleteDialog"
+      :title="t('message.delete')"
+      :message="t('message.confirmDeleteProd')"
+      color="error"
+      @confirm="confirmDelete"
+    />
   </v-row>
 </template>

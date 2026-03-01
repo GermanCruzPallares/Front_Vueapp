@@ -22,23 +22,30 @@ const { t } = useI18n();
             >mdi-account-circle</v-icon
           >
           <h2 class="text-h4 mb-2">
-            Bienvenido, {{ authStore.user?.username }}!
+            {{
+              t("message.welcomeUser", { username: authStore.user?.username })
+            }}
           </h2>
           <p class="text-subtitle-1 text-grey-darken-1 mb-6">
-            Has iniciado sesión correctamente con el rol:
+            {{ t("message.roleMessage") }}
             <strong>{{ authStore.user?.role }}</strong>
           </p>
 
-          <v-btn color="primary" variant="tonal" to="/products" class="mx-2">
-            Ver Productos
+          <v-btn
+            color="primary"
+            variant="tonal"
+            to="/admin/products"
+            class="mx-2"
+          >
+            {{ t("message.viewProducts") }}
           </v-btn>
           <v-btn
             color="secondary"
             variant="tonal"
-            to="/categories"
+            to="/admin/categories"
             class="mx-2"
           >
-            Ver Categorías
+            {{ t("message.viewCategories") }}
           </v-btn>
         </div>
 
@@ -46,9 +53,9 @@ const { t } = useI18n();
           <v-icon size="100" color="grey" class="mb-4"
             >mdi-lock-open-outline</v-icon
           >
-          <h2 class="text-h4 mb-4">¡Bienvenido a Shoe Shop!</h2>
+          <h2 class="text-h4 mb-4">{{ t("message.welcomeTitle") }}</h2>
           <p class="text-subtitle-1 mb-6">
-            Por favor, inicia sesión para gestionar el inventario.
+            {{ t("message.loginPrompt") }}
           </p>
           <v-btn color="primary" size="large" to="/login">
             {{ t("message.login") }}

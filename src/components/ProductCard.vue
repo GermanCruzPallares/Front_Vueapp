@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { useAuthStore } from "../stores/auth.store";
 import { useCategoryStore } from "../stores/category.store";
+import { useI18n } from "vue-i18n";
 import type { Product } from "../stores/product.store";
 import { computed } from "vue";
 
@@ -15,6 +16,7 @@ const emit = defineEmits<{
 
 const authStore = useAuthStore();
 const categoryStore = useCategoryStore();
+const { t } = useI18n();
 
 const categoryName = computed(() => {
   const cat = categoryStore.categories.find(
@@ -45,7 +47,7 @@ const categoryName = computed(() => {
         {{ product.name }}
       </v-card-title>
       <div class="text-body-2 text-grey-darken-1">
-        {{ product.brand }} - Talla {{ product.size }}
+        {{ product.brand }} - {{ t("message.size") }} {{ product.size }}
       </div>
     </v-card-item>
 
@@ -63,7 +65,7 @@ const categoryName = computed(() => {
         prepend-icon="mdi-pencil"
         @click="emit('edit', product)"
       >
-        Editar
+        {{ t("message.edit") }}
       </v-btn>
       <v-spacer></v-spacer>
       <v-btn
@@ -73,7 +75,7 @@ const categoryName = computed(() => {
         prepend-icon="mdi-delete"
         @click="emit('delete', product.id)"
       >
-        Eliminar
+        {{ t("message.delete") }}
       </v-btn>
     </v-card-actions>
   </v-card>

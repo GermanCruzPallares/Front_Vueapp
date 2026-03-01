@@ -26,19 +26,19 @@ const router = createRouter({
     {
       path: "/admin/dashboard",
       name: "admin-dashboard",
-      component: () => import("../views/HomeView.vue"), // Placeholder for now
+      component: () => import("../views/admin/DashboardView.vue"),
       meta: { layout: "AdminLayout", requiresAuth: true, requiresAdmin: true },
     },
     {
       path: "/admin/categories",
       name: "admin-categories",
-      component: () => import("../views/HomeView.vue"), // Placeholder for now
+      component: () => import("../views/admin/CategoriesView.vue"),
       meta: { layout: "AdminLayout", requiresAuth: true, requiresAdmin: true },
     },
     {
       path: "/admin/products",
       name: "admin-products",
-      component: () => import("../views/HomeView.vue"), // Placeholder for now
+      component: () => import("../views/admin/ProductsView.vue"),
       meta: { layout: "AdminLayout", requiresAuth: true, requiresAdmin: true },
     },
   ],

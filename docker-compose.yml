@@ -23,5 +23,12 @@ services:
     depends_on:
       - db
 
+  frontend:
+    image: germancp/front-vueapp:latest
+    ports:
+      - "5173:80"
+    depends_on:
+      - backend
+
 volumes:
   mssql_data:

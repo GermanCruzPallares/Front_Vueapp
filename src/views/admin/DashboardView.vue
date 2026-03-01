@@ -17,6 +17,11 @@ onMounted(async () => {
   await Promise.all([productStore.fetchAll(), categoryStore.fetchAll()]);
 });
 
+/**
+ * Filtra la lista completa de productos basándose en los criterios
+ * seleccionados en el Dashboard (Categoría y Rango de Fechas).
+ * Se ejecuta de forma reactiva en el cliente para mayor fluidez.
+ */
 const filteredProducts = computed(() => {
   return productStore.products.filter((p) => {
     const matchesCategory =
@@ -37,6 +42,9 @@ const totalCategories = computed(() => {
   if (uiStore.dashboardFilters.categoryId) return 1;
   return categoryStore.categories.length;
 });
+/**
+ * Calcula el precio medio de los productos filtrados actualmente.
+ */
 const avgPrice = computed(() => {
   if (filteredProducts.value.length === 0) return 0;
   const total = filteredProducts.value.reduce(

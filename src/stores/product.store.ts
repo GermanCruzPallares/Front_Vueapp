@@ -22,6 +22,10 @@ export const useProductStore = defineStore("product", () => {
 
   const totalProducts = ref(0);
 
+  /**
+   * Obtiene todos los productos sin paginación.
+   * Útil para gráficas y dashboards que requieren datos completos.
+   */
   async function fetchAll() {
     loading.value = true;
     try {
@@ -40,6 +44,10 @@ export const useProductStore = defineStore("product", () => {
     }
   }
 
+  /**
+   * Realiza una búsqueda paginada y filtrada en el servidor.
+   * Maneja términos de búsqueda, categorías, fechas y ordenación.
+   */
   async function fetchPaged(params: {
     search?: string;
     page: number;

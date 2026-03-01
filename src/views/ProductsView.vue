@@ -36,7 +36,10 @@ const loadProducts = async () => {
   });
 };
 
-// Debounced search for the text field
+/**
+ * Lógica de búsqueda con "debouncing" para evitar saturar el servidor.
+ * Espera 500ms tras la última pulsación antes de resetear la página y pedir datos.
+ */
 let searchTimeout: any = null;
 watch(search, () => {
   if (searchTimeout) clearTimeout(searchTimeout);
@@ -46,13 +49,19 @@ watch(search, () => {
   }, 500);
 });
 
-// Immediate watch for other filters
+/**
+ * Observador inmediato para cambios en filtros (categoría, orden, fechas).
+ * Resetea siempre a la primera página para mostrar resultados consistentes.
+ */
 watch([sortBy, isAscending, categoryId, startDate, endDate], () => {
   page.value = 1;
   loadProducts();
 });
 
-// Handle pagination change
+/**
+ * Gestiona el cambio de página y hace scroll hacia arriba
+ * para que el usuario vea los nuevos resultados cómodamente.
+ */
 watch(page, () => {
   loadProducts();
   window.scrollTo({ top: 0, behavior: "smooth" });

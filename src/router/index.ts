@@ -65,6 +65,10 @@ const router = createRouter({
 router.beforeEach((to, from, next) => {
   const authStore = useAuthStore();
 
+  /**
+   * Guardia de navegación: Comprueba si la ruta requiere autenticación
+   * o rol de administrador, redirigiendo al login o al inicio según corresponda.
+   */
   if (to.meta.requiresAuth && !authStore.isAuthenticated) {
     next("/login");
   } else if (to.meta.requiresAdmin && !authStore.isAdmin) {

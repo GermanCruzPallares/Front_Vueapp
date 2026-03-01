@@ -1,42 +1,17 @@
-# .
+docker-compose build && docker compose up
+docker-compose build ; docker compose up
 
-This template should help get you started developing with Vue 3 in Vite.
+### ¿Cómo se popula la base de datos?
 
-## Recommended IDE Setup
+`Program.cs
+`context.Database.Migrate();`
+Esto se encarga de crear la base de datos en el servidor de SQL Server en caso de que no exista, y a su vez corre todas las
 
-[VS Code](https://code.visualstudio.com/) + [Vue (Official)](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
+**Migraciones de Entity Framework Core**.
+`AppDbContext.cs` (`OnModelCreating`)
 
-## Recommended Browser Setup
+| **Admin** | `admin` | `admin123` |
+| **Usuario** | `testuser` | `user123` |
 
-- Chromium-based browsers (Chrome, Edge, Brave, etc.):
-  - [Vue.js devtools](https://chromewebstore.google.com/detail/vuejs-devtools/nhdogjmejiglipccpnnnanhbledajbpd)
-  - [Turn on Custom Object Formatter in Chrome DevTools](http://bit.ly/object-formatters)
-- Firefox:
-  - [Vue.js devtools](https://addons.mozilla.org/en-US/firefox/addon/vue-js-devtools/)
-  - [Turn on Custom Object Formatter in Firefox DevTools](https://fxdx.dev/firefox-devtools-custom-object-formatters/)
-
-## Type Support for `.vue` Imports in TS
-
-TypeScript cannot handle type information for `.vue` imports by default, so we replace the `tsc` CLI with `vue-tsc` for type checking. In editors, we need [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) to make the TypeScript language service aware of `.vue` types.
-
-## Customize configuration
-
-See [Vite Configuration Reference](https://vite.dev/config/).
-
-## Project Setup
-
-```sh
-npm install
-```
-
-### Compile and Hot-Reload for Development
-
-```sh
-npm run dev
-```
-
-### Type-Check, Compile and Minify for Production
-
-```sh
-npm run build
-```
+http://localhost:8080/swagger/index.html
+http://localhost:5173

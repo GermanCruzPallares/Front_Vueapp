@@ -1,17 +1,20 @@
 <script setup lang="ts">
 import { computed } from "vue";
 import { Doughnut } from "vue-chartjs";
-import { useProductStore } from "../../../stores/product.store";
+import { useProductStore, type Product } from "../../../stores/product.store";
 import { useCategoryStore } from "../../../stores/category.store";
 import "@/plugins/chartConfig";
 
-const productStore = useProductStore();
 const categoryStore = useCategoryStore();
+
+const props = defineProps<{
+  products: Product[];
+}>();
 
 const chartData = computed(() => {
   const labels = categoryStore.categories.map((c) => c.name);
   const data = categoryStore.categories.map((c) => {
-    return productStore.products.filter((p) => p.categoryId === c.id).length;
+    return props.products.filter((p) => p.categoryId === c.id).length;
   });
 
   return {

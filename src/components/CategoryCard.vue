@@ -3,8 +3,9 @@ import { useAuthStore } from "../stores/auth.store";
 import { useI18n } from "vue-i18n";
 import type { Category } from "../stores/category.store";
 
-defineProps<{
+const props = defineProps<{
   category: Category;
+  showActions?: boolean;
 }>();
 
 const emit = defineEmits<{
@@ -12,7 +13,6 @@ const emit = defineEmits<{
   (e: "delete", id: number): void;
 }>();
 
-const authStore = useAuthStore();
 const { t } = useI18n();
 </script>
 
@@ -29,9 +29,9 @@ const { t } = useI18n();
       <p class="text-body-1">{{ category.description }}</p>
     </v-card-text>
 
-    <v-divider v-if="authStore.isAdmin"></v-divider>
+    <v-divider v-if="showActions"></v-divider>
 
-    <v-card-actions v-if="authStore.isAdmin" class="pa-4">
+    <v-card-actions v-if="showActions" class="pa-4">
       <v-spacer></v-spacer>
       <v-btn
         variant="text"

@@ -36,6 +36,12 @@ const router = createRouter({
       meta: { layout: "MainLayout", requiresAuth: true },
     },
     {
+      path: "/products/:id",
+      name: "product-detail",
+      component: () => import("../views/ProductDetailView.vue"),
+      meta: { layout: "MainLayout", requiresAuth: true },
+    },
+    {
       path: "/admin/dashboard",
       name: "admin-dashboard",
       component: () => import("../views/admin/DashboardView.vue"),

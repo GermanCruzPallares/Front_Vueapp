@@ -7,6 +7,7 @@ import { computed } from "vue";
 
 const props = defineProps<{
   product: Product;
+  showActions?: boolean;
 }>();
 
 const emit = defineEmits<{
@@ -14,7 +15,6 @@ const emit = defineEmits<{
   (e: "delete", id: number): void;
 }>();
 
-const authStore = useAuthStore();
 const categoryStore = useCategoryStore();
 const { t } = useI18n();
 
@@ -27,7 +27,11 @@ const categoryName = computed(() => {
 </script>
 
 <template>
-  <v-card class="mb-4 elevation-3 rounded-xl overflow-hidden" border>
+  <v-card
+    class="mb-4 elevation-3 rounded-xl overflow-hidden"
+    border
+    :to="showActions ? undefined : `/products/${product.id}`"
+  >
     <v-img
       height="200"
       src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80"
@@ -55,9 +59,9 @@ const categoryName = computed(() => {
       <p class="text-body-2 line-clamp-2">{{ product.description }}</p>
     </v-card-text>
 
-    <v-divider v-if="authStore.isAdmin"></v-divider>
+    <v-divider v-if="showActions"></v-divider>
 
-    <v-card-actions v-if="authStore.isAdmin" class="pa-4 bg-grey-lighten-4">
+    <v-card-actions v-if="showActions" class="pa-4 bg-grey-lighten-4">
       <v-btn
         variant="elevated"
         color="primary"

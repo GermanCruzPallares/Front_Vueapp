@@ -48,10 +48,9 @@ const onSubmit = handleSubmit(async (values) => {
 
     const data = await response.json();
     authStore.setToken(data.token);
-
     authStore.setUser({
-      username: values.username,
-      role: values.username === "admin" ? "Admin" : "User",
+      username: data.username,
+      role: data.role,
     });
 
     router.push("/");

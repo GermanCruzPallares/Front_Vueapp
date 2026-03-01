@@ -4,6 +4,7 @@ import { useRouter } from "vue-router";
 import { useAuthStore } from "@/stores/auth.store";
 import { useI18n } from "vue-i18n";
 import LanguageSwitcher from "@/components/LanguageSwitcher.vue";
+import ThemeSwitcher from "@/components/ThemeSwitcher.vue";
 import { useUiStore } from "@/stores/ui.store";
 
 const { t, locale } = useI18n();
@@ -53,7 +54,7 @@ const logout = () => {
     <v-app-bar-title>{{ t("message.siteName") }}</v-app-bar-title>
 
     <v-spacer></v-spacer>
-
+    <ThemeSwitcher />
     <LanguageSwitcher />
 
     <v-btn v-if="authStore.isAuthenticated" icon @click="logout">
@@ -64,7 +65,9 @@ const logout = () => {
     </v-btn>
   </v-app-bar>
 
-  <v-main>
+  <v-main
+    :class="uiStore.theme === 'dark' ? 'bg-background' : 'bg-grey-lighten-4'"
+  >
     <v-container fluid>
       <RouterView />
     </v-container>

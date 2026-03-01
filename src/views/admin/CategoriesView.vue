@@ -55,9 +55,9 @@ const openEdit = (category: Category) => {
 const onSubmit = handleSubmit(async (values) => {
   let success = false;
   if (isEditing.value && currentId.value) {
-    success = await categoryStore.update(currentId.value, values);
+    success = await categoryStore.update(currentId.value, values as any);
   } else {
-    success = await categoryStore.create(values);
+    success = await categoryStore.create(values as any);
   }
 
   if (success) {
@@ -106,13 +106,18 @@ const confirmDelete = async () => {
       sm="6"
       md="4"
     >
-      <CategoryCard :category="cat" @edit="openEdit" @delete="deleteCategory" />
+      <CategoryCard
+        :category="cat"
+        show-actions
+        @edit="openEdit"
+        @delete="deleteCategory"
+      />
     </v-col>
 
     <!-- Dialogo para Crear/Editar -->
     <v-dialog v-model="dialog" max-width="500px">
       <v-card class="rounded-lg">
-        <v-toolbar color="primary" dark density="comfortable">
+        <v-toolbar color="grey-lighten-4" border density="comfortable">
           <v-toolbar-title>{{
             isEditing ? t("message.editCategory") : t("message.newCategory")
           }}</v-toolbar-title>

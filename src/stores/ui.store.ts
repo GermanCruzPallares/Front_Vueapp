@@ -8,6 +8,8 @@ export const useUiStore = defineStore("ui", () => {
     color: "success",
   });
 
+  const theme = ref(localStorage.getItem("user-theme") || "light");
+
   function showSnackbar(text: string, color: string = "success") {
     snackbar.value = {
       show: true,
@@ -16,5 +18,16 @@ export const useUiStore = defineStore("ui", () => {
     };
   }
 
-  return { snackbar, showSnackbar };
+  function toggleTheme() {
+    theme.value = theme.value === "light" ? "dark" : "light";
+    localStorage.setItem("user-theme", theme.value);
+  }
+
+  const dashboardFilters = ref({
+    categoryId: null as number | null,
+    startDate: null as string | null,
+    endDate: null as string | null,
+  });
+
+  return { snackbar, showSnackbar, theme, toggleTheme, dashboardFilters };
 });

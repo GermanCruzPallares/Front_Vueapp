@@ -34,7 +34,7 @@ const { t } = useI18n();
           <v-btn
             color="primary"
             variant="tonal"
-            to="/admin/products"
+            :to="authStore.isAdmin ? '/admin/products' : '/products'"
             class="mx-2"
           >
             {{ t("message.viewProducts") }}
@@ -42,7 +42,7 @@ const { t } = useI18n();
           <v-btn
             color="secondary"
             variant="tonal"
-            to="/admin/categories"
+            :to="authStore.isAdmin ? '/admin/categories' : '/categories'"
             class="mx-2"
           >
             {{ t("message.viewCategories") }}

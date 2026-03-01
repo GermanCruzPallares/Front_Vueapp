@@ -1,18 +1,17 @@
 <script setup lang="ts">
 import { computed } from "vue";
 import { PolarArea } from "vue-chartjs";
-import { useProductStore } from "../../../stores/product.store";
+import { useProductStore, type Product } from "../../../stores/product.store";
 import "@/plugins/chartConfig";
 
-const productStore = useProductStore();
+const props = defineProps<{
+  products: Product[];
+}>();
 
 const chartData = computed(() => {
-  const brands = [
-    ...new Set(productStore.products.map((p) => p.brand || "Genérico")),
-  ];
+  const brands = [...new Set(props.products.map((p) => p.brand || "Genérico"))];
   const data = brands.map((b) => {
-    return productStore.products.filter((p) => (p.brand || "Genérico") === b)
-      .length;
+    return props.products.filter((p) => (p.brand || "Genérico") === b).length;
   });
 
   return {

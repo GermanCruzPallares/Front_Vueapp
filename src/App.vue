@@ -1,10 +1,23 @@
 <script setup lang="ts">
-import { computed, defineAsyncComponent, onMounted } from "vue";
+import { computed, defineAsyncComponent, onMounted, watch } from "vue";
 import { useRoute } from "vue-router";
 import { useAuthStore } from "@/stores/auth.store";
+import { useUiStore } from "@/stores/ui.store";
+import { useTheme } from "vuetify";
 
 const route = useRoute();
 const authStore = useAuthStore();
+const uiStore = useUiStore();
+const theme = useTheme();
+
+// Apply theme to global Vuetify state
+watch(
+  () => uiStore.theme,
+  (newTheme) => {
+    theme.global.name.value = newTheme;
+  },
+  { immediate: true },
+);
 
 const layouts: Record<string, any> = {
   MainLayout: defineAsyncComponent(
@@ -28,7 +41,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <v-app>
+  <v-app :theme="uiStore.theme">
     <component :is="layout">
       <router-view />
     </component>

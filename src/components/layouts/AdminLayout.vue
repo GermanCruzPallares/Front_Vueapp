@@ -4,6 +4,7 @@ import { useRouter } from "vue-router";
 import { useAuthStore } from "@/stores/auth.store";
 import { useI18n } from "vue-i18n";
 import LanguageSwitcher from "@/components/LanguageSwitcher.vue";
+import ThemeSwitcher from "@/components/ThemeSwitcher.vue";
 import { useUiStore } from "@/stores/ui.store";
 
 const { t, locale } = useI18n();
@@ -19,7 +20,12 @@ const logout = () => {
 </script>
 
 <template>
-  <v-navigation-drawer v-model="drawer" app color="grey-darken-4">
+  <v-navigation-drawer
+    v-model="drawer"
+    app
+    :color="uiStore.theme === 'dark' ? 'surface' : 'grey-lighten-5'"
+    border
+  >
     <v-list nav>
       <v-list-item
         prepend-icon="mdi-view-dashboard"
@@ -46,17 +52,22 @@ const logout = () => {
     </v-list>
   </v-navigation-drawer>
 
-  <v-app-bar color="secondary" density="compact" dark elevation="4">
+  <v-app-bar
+    :color="uiStore.theme === 'dark' ? 'surface' : 'white'"
+    border
+    density="compact"
+    elevation="1"
+  >
     <v-app-bar-nav-icon @click="drawer = !drawer"></v-app-bar-nav-icon>
     <v-app-bar-title class="font-weight-black">{{
       t("message.adminPanel")
     }}</v-app-bar-title>
 
     <v-spacer></v-spacer>
-
+    <ThemeSwitcher />
     <LanguageSwitcher />
 
-    <v-chip class="ma-2" color="white" label text-color="secondary">
+    <v-chip class="ma-2" color="secondary" label variant="tonal">
       <v-icon start icon="mdi-account-star"></v-icon>
       {{ authStore.user?.username }}
     </v-chip>
@@ -66,7 +77,9 @@ const logout = () => {
     </v-btn>
   </v-app-bar>
 
-  <v-main class="bg-grey-lighten-3">
+  <v-main
+    :class="uiStore.theme === 'dark' ? 'bg-background' : 'bg-grey-lighten-3'"
+  >
     <v-container fluid class="pa-6">
       <RouterView />
     </v-container>
@@ -75,8 +88,11 @@ const logout = () => {
   <v-footer
     app
     border
-    color="grey-darken-3"
-    class="text-white justify-center py-2"
+    :color="uiStore.theme === 'dark' ? 'surface' : 'grey-lighten-4'"
+    :class="[
+      'justify-center py-2',
+      uiStore.theme === 'dark' ? 'text-grey' : 'text-grey-darken-1',
+    ]"
   >
     <div class="text-caption text-uppercase font-weight-bold">
       {{ t("message.adminMode") }} &bull; {{ new Date().getFullYear() }} &bull;
